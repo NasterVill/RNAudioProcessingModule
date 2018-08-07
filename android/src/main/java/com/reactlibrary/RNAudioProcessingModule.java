@@ -29,7 +29,7 @@ public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
 
     private final ReactApplicationContext reactContext;
 		
-    private AudioRecord audioRecord;
+    private AudioRecord audioRecord = null;
     private int buffSize = 0;
     private boolean stopFlag = false;
 
