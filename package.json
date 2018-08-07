@@ -1,17 +1,24 @@
 {
-  "name": "react-native-audio-processing",
+	"name": "react-native-audio-processing",
   "version": "1.0.0",
-  "description": "",
+  "description": "An Android module to analize the frequency of a captured sound frame",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NasterVill/RNAudioProcessingModule"
+  },
+  "homepage": "https://github.com/NasterVill/RNAudioProcessingModule#README.MD",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "react-native"
+    "react-native",
+    "audio processing",
+    "audio-processing"
   ],
-  "author": "",
-  "license": "",
-  "peerDependencies": {
+  "author": "Vitaliy Pankov",
+	"license": "ISC",
+	"peerDependencies": {
     "react-native": "^0.41.2",
     "react-native-windows": "0.41.0-rc.1"
   }
