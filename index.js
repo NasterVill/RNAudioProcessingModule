@@ -1,6 +1,6 @@
 
 import { NativeModules } from 'react-native';
 
-const { RNAudioProcessing } = NativeModules;
+const { RNAudioProcessingModule } = NativeModules;
 
-export default RNAudioProcessing;
+export default RNAudioProcessingModule;
