@@ -1,5 +1,6 @@
 package com.reactlibrary;
 
+import android.annotation.TargetApi;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
@@ -16,16 +17,19 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.reactlibrary.fequency_tools.fft_utils.FFTCooleyTukey;
 import com.reactlibrary.fequency_tools.FrequencyDetector;
 import com.reactlibrary.fequency_tools.windows.HammingWindow;
+import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@TargetApi(23)
 public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
     private static final int SAMPLE_RATE = 22050;
     private static final int DEFAULT_BUFF_SIZE = 16384;
     private static final int MIN_FREQUENCY = 40;
     private static final int MAX_FREQUENCY = 1300;
     private static final String FREQUENCY_DETECTED_EVENT_NAME = "FrequencyDetected";
+    private static final String TAG = "RNAudioProcessingModule";
 
     private final ReactApplicationContext reactContext;
 		
@@ -36,6 +40,7 @@ public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
    public RNAudioProcessingModule(ReactApplicationContext reactContext) {
     super(reactContext);
     this.reactContext = reactContext;
+    Log.d(TAG, "constructor");
   }
 
     @Override
@@ -56,6 +61,8 @@ public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
 
             this.buffSize = Math.max( RNAudioProcessingModule.DEFAULT_BUFF_SIZE, minBufSize * 4);
 
+            Log.d(TAG, "init before initialization");
+
             if (minBufSize != AudioRecord.ERROR_BAD_VALUE && minBufSize != AudioRecord.ERROR) {
                 audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
                                             RNAudioProcessingModule.SAMPLE_RATE,
@@ -63,13 +70,19 @@ public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
                                             AudioFormat.ENCODING_PCM_FLOAT,
                                             this.buffSize);
             }
+
+            Log.d(TAG, "init after initialization");
     }
 
     @ReactMethod
     public void stop() {
+        Log.d(TAG, "before stop");
+
         stopFlag = true;
         audioRecord.stop();
         audioRecord.release();
+
+        Log.d(TAG, "after stop");
     }
 
     @ReactMethod
