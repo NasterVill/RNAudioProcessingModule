@@ -22,7 +22,6 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 
-@TargetApi(23)
 public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
     private static final int SAMPLE_RATE = 22050;
     private static final int DEFAULT_BUFF_SIZE = 16384;
