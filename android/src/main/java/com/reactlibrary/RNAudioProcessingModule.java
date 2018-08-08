@@ -40,7 +40,6 @@ public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
    public RNAudioProcessingModule(ReactApplicationContext reactContext) {
     super(reactContext);
     this.reactContext = reactContext;
-    Log.d(TAG, "constructor");
   }
 
     @Override
@@ -61,8 +60,6 @@ public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
 
             this.buffSize = Math.max( RNAudioProcessingModule.DEFAULT_BUFF_SIZE, minBufSize * 4);
 
-            Log.d(TAG, "init before initialization");
-
             if (minBufSize != AudioRecord.ERROR_BAD_VALUE && minBufSize != AudioRecord.ERROR) {
                 audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
                                             RNAudioProcessingModule.SAMPLE_RATE,
@@ -70,19 +67,13 @@ public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
                                             AudioFormat.ENCODING_PCM_FLOAT,
                                             this.buffSize);
             }
-
-            Log.d(TAG, "init after initialization");
     }
 
     @ReactMethod
     public void stop() {
-        Log.d(TAG, "before stop");
-
         stopFlag = true;
         audioRecord.stop();
         audioRecord.release();
-
-        Log.d(TAG, "after stop");
     }
 
     @ReactMethod
