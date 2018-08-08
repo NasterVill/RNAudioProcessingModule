@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 public class FrequencyDetector
 {
-    private static final int peaksAmount = 50;
+    private static final int peaksAmount = 15;
 
     public float findFrequency(float[] soundData, int sampleRate, float minFreq, float maxFreq, FastFourierTransform specificFFT, Window window) {
         if(specificFFT == null) {
