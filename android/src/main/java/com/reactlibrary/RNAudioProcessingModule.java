@@ -22,6 +22,8 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.lang.Thread.sleep;
+
 public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
     private static final int SAMPLE_RATE = 44100;
     private static final int DEFAULT_BUFF_SIZE = 32768;
@@ -97,7 +99,7 @@ public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
 
                 this.sendEvent(this.reactContext, RNAudioProcessingModule.FREQUENCY_DETECTED_EVENT_NAME, params);
                 try {
-                    wait(2000);
+                    sleep(1000);
                 } catch (InterruptedException exception){
                     System.err.println(exception.getMessage());
                 }
