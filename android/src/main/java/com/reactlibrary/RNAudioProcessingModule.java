@@ -21,22 +21,25 @@ import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Date;
 
 import static java.lang.Thread.sleep;
 
-public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
+public class RNAudioProcessingModule extends ReactContextBaseJavaModule implements Runnable {
     private static final int SAMPLE_RATE = 44100;
     private static final int DEFAULT_BUFF_SIZE = 32768;
     private static final int MIN_FREQUENCY = 40;
     private static final int MAX_FREQUENCY = 1300;
     private static final String FREQUENCY_DETECTED_EVENT_NAME = "FrequencyDetected";
     private static final String TAG = "RNAudioProcessingModule";
+    private static final float ALLOWED_FREQUENCY_DIFFERENCE = 1;
 
     private final ReactApplicationContext reactContext;
 		
     private AudioRecord audioRecord = null;
     private int buffSize = 0;
     private boolean stopFlag = false;
+    private float lastComputedFrequency = 0;
 
    public RNAudioProcessingModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -77,6 +80,7 @@ public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
         audioRecord.release();
     }
 
+    @Override
     @ReactMethod
     public void run() {
         audioRecord.startRecording();
@@ -93,15 +97,14 @@ public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
                                                         RNAudioProcessingModule.MAX_FREQUENCY,
                                                         new FFTCooleyTukey(),
                                                         new HammingWindow());
+                if ((Math.abs(frequency - lastComputedFrequency) <= ALLOWED_FREQUENCY_DIFFERENCE) && frequency != 0) {
+                    WritableMap params = Arguments.createMap();
+                    params.putDouble("frequency", frequency);
 
-                WritableMap params = Arguments.createMap();
-                params.putDouble("frequency", frequency);
-
-                this.sendEvent(this.reactContext, RNAudioProcessingModule.FREQUENCY_DETECTED_EVENT_NAME, params);
-                try {
-                    sleep(1000);
-                } catch (InterruptedException exception){
-                    System.err.println(exception.getMessage());
+                    this.sendEvent(this.reactContext, RNAudioProcessingModule.FREQUENCY_DETECTED_EVENT_NAME, params);
+                }
+                if(frequency != 0) {
+                    lastComputedFrequency = frequency;
                 }
             }
         } while (!stopFlag);
