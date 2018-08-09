@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
-    private static final int SAMPLE_RATE = 22050;
-    private static final int DEFAULT_BUFF_SIZE = 16384;
+    private static final int SAMPLE_RATE = 44100;
+    private static final int DEFAULT_BUFF_SIZE = 32768;
     private static final int MIN_FREQUENCY = 40;
     private static final int MAX_FREQUENCY = 1300;
     private static final String FREQUENCY_DETECTED_EVENT_NAME = "FrequencyDetected";
@@ -83,7 +83,7 @@ public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
         FrequencyDetector detector = new FrequencyDetector();
 
         do {
-            final int read = audioRecord.read(readBuffer, 0, this.buffSize, AudioRecord.READ_NON_BLOCKING);
+            final int read = audioRecord.read(readBuffer, 0, this.buffSize, AudioRecord.READ_BLOCKING);
             if (read > 0) {
                 float frequency = detector.findFrequency(readBuffer,
                                                         sampleRate,
@@ -96,6 +96,11 @@ public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
                 params.putDouble("frequency", frequency);
 
                 this.sendEvent(this.reactContext, RNAudioProcessingModule.FREQUENCY_DETECTED_EVENT_NAME, params);
+                try {
+                    wait(2000);
+                } catch (InterruptedException exception){
+                    System.err.println(exception.getMessage());
+                }
             }
         } while (!stopFlag);
     }
