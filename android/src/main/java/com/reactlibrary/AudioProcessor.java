@@ -12,10 +12,10 @@ public class AudioProcessor implements Runnable {
     private static final int SAMPLE_RATE = 22050;
     private static final int DEFAULT_BUFF_SIZE = 16384;
     private static final int MIN_FREQUENCY = 50;
-    private static final int MAX_FREQUENCY = 500;
+    private static final int MAX_FREQUENCY = 1300;
 
     public interface FrequencyDetectionListener {
-        void onFrequencyDetected(double freq);
+        void onFrequencyDetected(float freq);
     }
 
     private AudioRecord audioRecord;
@@ -29,10 +29,14 @@ public class AudioProcessor implements Runnable {
     }
 
     public void init() {
-        int minBufSize = AudioRecord.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
+        int minBufSize = AudioRecord.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_FLOAT);
+        this.buffSize = Math.max(DEFAULT_BUFF_SIZE, minBufSize * 4);
         if (minBufSize != AudioRecord.ERROR_BAD_VALUE && minBufSize != AudioRecord.ERROR) {
-            audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, Math.max(DEFAULT_BUFF_SIZE, minBufSize * 4));
-            this.buffSize = Math.max(DEFAULT_BUFF_SIZE, minBufSize * 4);
+            audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
+                    SAMPLE_RATE,
+                    AudioFormat.CHANNEL_IN_MONO,
+                    AudioFormat.ENCODING_PCM_FLOAT,
+                    this.buffSize);
         }
     }
 

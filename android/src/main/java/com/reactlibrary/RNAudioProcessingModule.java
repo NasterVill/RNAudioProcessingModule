@@ -25,7 +25,6 @@ public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
     private AudioProcessor audioProcessor;
     private boolean isProcessing = false;
     private ExecutorService executor = Executors.newSingleThreadExecutor();
-    private RNAudioProcessingModule self = this;
 
     public RNAudioProcessingModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -45,7 +44,7 @@ public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
     }
 
 
-    private void sendEvent(ReactContext reactContext,
+    private static void sendEvent(ReactContext reactContext,
                            String eventName,
                            @Nullable WritableMap params) {
         reactContext
@@ -62,11 +61,11 @@ public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
         audioProcessor.init();
         audioProcessor.setFrequencyDetectionListener(new AudioProcessor.FrequencyDetectionListener() {
             @Override
-            public void onFrequencyDetected(final double frequency) {
+            public void onFrequencyDetected(final float frequency) {
                 WritableMap params = Arguments.createMap();
                 params.putDouble("frequency", frequency);
 
-                self.sendEvent(self.reactContext, RNAudioProcessingModule.FREQUENCY_DETECTED_EVENT_NAME, params);
+                sendEvent(reactContext, RNAudioProcessingModule.FREQUENCY_DETECTED_EVENT_NAME, params);
             }
         });
 
