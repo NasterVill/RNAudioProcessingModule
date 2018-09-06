@@ -13,6 +13,7 @@ public class AudioProcessor implements Runnable {
     private static final int DEFAULT_BUFF_SIZE = 65536;
     private static final int MIN_FREQUENCY = 50;
     private static final int MAX_FREQUENCY = 400;
+    private static final float ALLOWED_FREQUENCY_DIFFERENCE = 1;
 
     public interface FrequencyDetectionListener {
         void onFrequencyDetected(float freq);
@@ -22,7 +23,7 @@ public class AudioProcessor implements Runnable {
     private FrequencyDetectionListener frequencyDetectionListener = null;
     private int buffSize = 0;
     private boolean stopFlag = false;
-
+    private float previousFrequency = 0;
 
     public void setFrequencyDetectionListener(FrequencyDetectionListener frequencyDetectionListener) {
         this.frequencyDetectionListener = frequencyDetectionListener;
@@ -62,7 +63,10 @@ public class AudioProcessor implements Runnable {
                         MAX_FREQUENCY,
                         new FFTCooleyTukey(),
                         new HammingWindow());
-                frequencyDetectionListener.onFrequencyDetected(frequency);
+                if(Math.abs(frequency - previousFrequency) < ALLOWED_FREQUENCY_DIFFERENCE) {
+                    frequencyDetectionListener.onFrequencyDetected(frequency);
+                }
+                previousFrequency = frequency;
             }
         } while (!stopFlag);
     }
