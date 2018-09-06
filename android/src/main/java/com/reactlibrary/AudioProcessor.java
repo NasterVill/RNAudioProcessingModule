@@ -9,10 +9,10 @@ import com.reactlibrary.fequency_tools.FrequencyDetector;
 import com.reactlibrary.fequency_tools.windows.HammingWindow;
 
 public class AudioProcessor implements Runnable {
-    private static final int SAMPLE_RATE = 22050;
-    private static final int DEFAULT_BUFF_SIZE = 16384;
+    private static final int SAMPLE_RATE = 44100;
+    private static final int DEFAULT_BUFF_SIZE = 65536;
     private static final int MIN_FREQUENCY = 50;
-    private static final int MAX_FREQUENCY = 1300;
+    private static final int MAX_FREQUENCY = 400;
 
     public interface FrequencyDetectionListener {
         void onFrequencyDetected(float freq);
