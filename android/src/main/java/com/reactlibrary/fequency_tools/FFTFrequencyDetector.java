@@ -6,8 +6,10 @@ import com.reactlibrary.auxiliary_types.Pair;
 
 import java.util.Arrays;
 
-public class FrequencyDetector
+public class FFTFrequencyDetector
 {
+    private static final int MIN_FREQUENCY = 50;
+    private static final int MAX_FREQUENCY = 400;
     private static final int peaksAmount = 15;
 
     public float findFrequency(float[] soundData, int sampleRate, float minFreq, float maxFreq, FastFourierTransform specificFFT, Window window) {

@@ -1,6 +1,6 @@
 {
 	"name": "react-native-audio-processing",
-	"version": "1.0.6",
+	"version": "2.0.0",
   "description": "An Android module to analize the frequency of a captured sound frame",
   "repository": {
     "type": "git",
