@@ -4,14 +4,13 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 
-import com.reactlibrary.fequency_tools.YINFrequencyDetector;
 import com.reactlibrary.fequency_tools.fft_utils.FFTCooleyTukey;
 import com.reactlibrary.fequency_tools.FFTFrequencyDetector;
 import com.reactlibrary.fequency_tools.windows.HammingWindow;
 
 public class AudioProcessor implements Runnable {
-    private static final int SAMPLE_RATE = 44100;
-    private static final int DEFAULT_BUFF_SIZE = 65536;
+    private static final int SAMPLE_RATE = 22050;
+    private static final int DEFAULT_BUFF_SIZE = 16384;
     private static final float ALLOWED_FREQUENCY_DIFFERENCE = 1;
 
     public interface FrequencyDetectionListener {
@@ -51,14 +50,17 @@ public class AudioProcessor implements Runnable {
         audioRecord.startRecording();
         final int sampleRate = audioRecord.getSampleRate();
         float[] readBuffer = new float[this.buffSize];
-        YINFrequencyDetector detector = new YINFrequencyDetector();
-        detector.setSampleRate(sampleRate);
-        detector.setThreshold(YINFrequencyDetector.DEFAULT_THRESHOLD);
+        FFTFrequencyDetector detector = new FFTFrequencyDetector();
 
         do {
             final int read = audioRecord.read(readBuffer, 0, this.buffSize, AudioRecord.READ_NON_BLOCKING);
             if (read > 0) {
-                float frequency = detector.findFrequency(readBuffer);
+                float frequency = detector.findFrequency(readBuffer,
+                        sampleRate,
+                        FFTFrequencyDetector.MIN_FREQUENCY,
+                        FFTFrequencyDetector.MAX_FREQUENCY,
+                        new FFTCooleyTukey(),
+                        new HammingWindow());
                 if(Math.abs(frequency - previousFrequency) < ALLOWED_FREQUENCY_DIFFERENCE) {
                     frequencyDetectionListener.onFrequencyDetected(frequency);
                 }

@@ -8,8 +8,9 @@ import java.util.Arrays;
 
 public class FFTFrequencyDetector
 {
-    private static final int MIN_FREQUENCY = 50;
-    private static final int MAX_FREQUENCY = 400;
+    public static final int MIN_FREQUENCY = 50;
+    public static final int MAX_FREQUENCY = 500;
+
     private static final int peaksAmount = 15;
 
     public float findFrequency(float[] soundData, int sampleRate, float minFreq, float maxFreq, FastFourierTransform specificFFT, Window window) {

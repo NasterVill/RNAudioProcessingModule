@@ -82,7 +82,7 @@ public class YINFrequencyDetector {
         float runningSum = 0;
         buffer[0] = 1;
 
-        // Sum all the values in the autocorellation buffer and nomalise the result, replacing
+        // Sum all the values in the autocorellation buffer and normalise the result, replacing
         // the value in the autocorellation buffer with a cumulative mean of the normalised difference
         for (tau = 1; tau < buffer.length; tau++) {
             runningSum += buffer[tau];
