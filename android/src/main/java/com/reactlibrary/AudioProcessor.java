@@ -11,18 +11,17 @@ import com.reactlibrary.fequency_tools.windows.HammingWindow;
 public class AudioProcessor implements Runnable {
     private static final int SAMPLE_RATE = 22050;
     private static final int DEFAULT_BUFF_SIZE = 16384;
-    private static final double ALLOWED_FREQUENCY_DIFFERENCE = 1;
+    private static final float ALLOWED_FREQUENCY_DIFFERENCE = 1;
 
     public interface FrequencyDetectionListener {
-        void onFrequencyDetected(float frequency);
+        void onFrequencyDetected(float freq);
     }
 
     private AudioRecord audioRecord;
     private FrequencyDetectionListener frequencyDetectionListener = null;
-    private float lastComputedFrequency = 1;
     private int buffSize = 0;
     private boolean stopFlag = false;
-
+    private float previousFrequency = 0;
 
     public void setFrequencyDetectionListener(FrequencyDetectionListener frequencyDetectionListener) {
         this.frequencyDetectionListener = frequencyDetectionListener;
@@ -52,7 +51,7 @@ public class AudioProcessor implements Runnable {
         do {
             final int read = audioRecord.read(mainBuffer, 0, this.buffSize);
             if (read > 0) {
-                float[] floatBuff = shortToDouble(mainBuffer, read);
+                float[] floatBuff = shortToFloat(mainBuffer, read);
                 float frequency = detector.findFrequency(
                         floatBuff,
                         sampleRate,
@@ -61,14 +60,15 @@ public class AudioProcessor implements Runnable {
                         new FFTCooleyTukey(),
                         new HammingWindow()
                 );
-                if ((Math.abs(frequency - lastComputedFrequency) <= ALLOWED_FREQUENCY_DIFFERENCE)) {
+                if(Math.abs(frequency - previousFrequency) < ALLOWED_FREQUENCY_DIFFERENCE) {
                     frequencyDetectionListener.onFrequencyDetected(frequency);
                 }
+                previousFrequency = frequency;
             }
         } while (!stopFlag);
     }
 
-    private float[] shortToDouble(short[] source, int length) {
+    private float[] shortToFloat(short[] source, int length) {
         length = (length > source.length) ? source.length : length;
 
         float[] resultArray = new float[length];
