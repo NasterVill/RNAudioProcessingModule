@@ -61,12 +61,10 @@ public class AudioProcessor implements Runnable {
                         new FFTCooleyTukey(),
                         new HammingWindow()
                 );
-                if ((Math.abs(frequency - lastComputedFrequency) <= ALLOWED_FREQUENCY_DIFFERENCE) && frequency != 0) {
+                if ((Math.abs(frequency - lastComputedFrequency) <= ALLOWED_FREQUENCY_DIFFERENCE)) {
                     frequencyDetectionListener.onFrequencyDetected(frequency);
                 }
-                if(frequency != 0) {
-                    lastComputedFrequency = frequency;
-                }
+                lastComputedFrequency = frequency;
             }
         } while (!stopFlag);
     }
