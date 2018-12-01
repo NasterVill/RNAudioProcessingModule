@@ -14,14 +14,15 @@ public class AudioProcessor implements Runnable {
     private static final float ALLOWED_FREQUENCY_DIFFERENCE = 1;
 
     public interface FrequencyDetectionListener {
-        void onFrequencyDetected(float freq);
+        void onFrequencyDetected(double freq);
     }
 
     private AudioRecord audioRecord;
     private FrequencyDetectionListener frequencyDetectionListener = null;
+    private double lastComputedFrequency = 1;
     private int buffSize = 0;
     private boolean stopFlag = false;
-    private float previousFrequency = 0;
+
 
     public void setFrequencyDetectionListener(FrequencyDetectionListener frequencyDetectionListener) {
         this.frequencyDetectionListener = frequencyDetectionListener;
@@ -45,35 +46,41 @@ public class AudioProcessor implements Runnable {
     public void run() {
         audioRecord.startRecording();
         final int sampleRate = audioRecord.getSampleRate();
-        short[] mainBuffer = new short[this.buffSize];
+        short[] buffer = new short[this.buffSize];
         FFTFrequencyDetector detector = new FFTFrequencyDetector();
 
         do {
-            final int read = audioRecord.read(mainBuffer, 0, this.buffSize);
+            final int read = audioRecord.read(buffer, 0, this.buffSize);
             if (read > 0) {
-                float[] floatBuff = shortToFloat(mainBuffer, read);
-                float frequency = detector.findFrequency(
-                        floatBuff,
+                double[] doubleBuff = shortToDouble(buffer, read);
+                double frequency = detector.findFrequency(
+                        doubleBuff,
                         sampleRate,
                         FFTFrequencyDetector.MIN_FREQUENCY,
                         FFTFrequencyDetector.MAX_FREQUENCY,
                         new FFTCooleyTukey(),
                         new HammingWindow()
                 );
-                if(Math.abs(frequency - previousFrequency) < ALLOWED_FREQUENCY_DIFFERENCE) {
+                if ((Math.abs(frequency - lastComputedFrequency) <= ALLOWED_FREQUENCY_DIFFERENCE) && frequency != 0) {
                     frequencyDetectionListener.onFrequencyDetected(frequency);
                 }
-                previousFrequency = frequency;
+                if(frequency != 0) {
+                    lastComputedFrequency = frequency;
+                }
             }
         } while (!stopFlag);
     }
 
-    private float[] shortToFloat(short[] source, int length) {
+    private double[] shortToDouble(short[] source, int length) {
         length = (length > source.length) ? source.length : length;
 
-        float[] resultArray = new float[length];
+        double[] resultArray = new double[length];
 
         for(int i = 0; i < length; i++) {
+            // The nominal range of ENCODING_PCM_FLOAT audio data is [-1.0, 1.0], but here we use
+            // ENCODING_PCM_16BIT, because ENCODING_PCM_FLOAT is supported only in API LOLLIPOP+ and higher
+            // so to work with float values, extended to double, we need to divide it
+            // by max 16-bit integer value
             resultArray[i] = source[i] / 32768.0F;
         }
         return resultArray;

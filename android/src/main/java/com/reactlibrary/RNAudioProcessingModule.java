@@ -61,7 +61,7 @@ public class RNAudioProcessingModule extends ReactContextBaseJavaModule {
         audioProcessor.init();
         audioProcessor.setFrequencyDetectionListener(new AudioProcessor.FrequencyDetectionListener() {
             @Override
-            public void onFrequencyDetected(final float frequency) {
+            public void onFrequencyDetected(final double frequency) {
                 WritableMap params = Arguments.createMap();
                 params.putDouble("frequency", frequency);
 

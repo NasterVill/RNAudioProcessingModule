@@ -1,5 +1,5 @@
 package com.reactlibrary.fequency_tools.windows;
 
 public interface Window {
-    float[] applyWindow(float[] inputData);
+    double[] applyWindow(double[] inputData);
 }

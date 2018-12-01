@@ -1,10 +1,8 @@
 package com.reactlibrary.fequency_tools.fft_utils;
 
-public class FFTCooleyTukey implements FastFourierTransform
-{
+public class FFTCooleyTukey implements FastFourierTransform {
     @Override
-    public float[] calculateSpectrogram(float[] inputData)
-    {
+    public double[] calculateSpectrogram(double[] inputData) {
         int length;
         int bitsInLength;
         if (isPowerOfTwo(inputData.length)) {
@@ -44,7 +42,7 @@ public class FFTCooleyTukey implements FastFourierTransform
 
                     // multiplying complex args
                     double oddPartReal = data[indexWithOffset] * oddPartMultiplierReal - data[indexWithOffset + 1] * oddPartMultiplierImaginary;
-                    double oddPartImaginary =  data[indexWithOffset] * oddPartMultiplierImaginary + data[indexWithOffset + 1] * oddPartMultiplierReal;
+                    double oddPartImaginary = data[indexWithOffset] * oddPartMultiplierImaginary + data[indexWithOffset + 1] * oddPartMultiplierReal;
 
                     // adding complex args
                     data[currentIndex] = evenPartReal + oddPartReal;
@@ -58,9 +56,9 @@ public class FFTCooleyTukey implements FastFourierTransform
         }
 
         // calculate spectrogram
-        float[] spectrogram = new float[length];
+        double[] spectrogram = new double[length];
         for (int i = 0, j = 0; i < spectrogram.length; i++, j += 2) {
-            spectrogram[i] = (float)Math.sqrt(data[j] * data[j] + data[j + 1] * data[j + 1]);
+            spectrogram[i] = Math.sqrt(data[j] * data[j] + data[j + 1] * data[j + 1]);
         }
         return spectrogram;
     }

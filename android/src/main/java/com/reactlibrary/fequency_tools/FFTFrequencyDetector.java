@@ -13,19 +13,19 @@ public class FFTFrequencyDetector
 
     private static final int peaksAmount = 15;
 
-    public float findFrequency(float[] soundData, int sampleRate, float minFreq, float maxFreq, FastFourierTransform specificFFT, Window window) {
+    public double findFrequency(double[] soundData, int sampleRate, double minFreq, double maxFreq, FastFourierTransform specificFFT, Window window) {
         if(specificFFT == null) {
             throw new IllegalArgumentException("The value of param FastFourierTransform can not be null!");
         }
 
-        float[] processedData;
+        double[] processedData;
         if(window != null) {
             processedData = window.applyWindow(soundData);
         } else {
             processedData = soundData;
         }
 
-        float[] spectrogram = specificFFT.calculateSpectrogram(processedData);
+        double[] spectrogram = specificFFT.calculateSpectrogram(processedData);
 
         int usefulMinSpectrum = Math.max(0,
                 (int)(minFreq * spectrogram.length / sampleRate));
@@ -47,16 +47,16 @@ public class FFTFrequencyDetector
 
 
         // trying all peaks to find one with smaller difference value
-        float minPeakValue = Float.MAX_VALUE;
+        double minPeakValue = Double.MAX_VALUE;
         int minOptimalInterval = 0;
         for (int i = 0; i < peakIndices.length; i++) {
             int index = peakIndices[i];
             int binIntervalStart = spectrogram.length / (index + 1);
             int binIntervalEnd = spectrogram.length / index;
             int tempInterval = 0;
-            float tempPeakValue = 0;
+            double tempPeakValue = 0;
             // scan bins frequencies/intervals
-            Pair<Float, Integer> scanResult = scanSignalIntervals(processedData, verifyFragmentOffset, verifyFragmentLength,
+            Pair<Double, Integer> scanResult = scanSignalIntervals(processedData, verifyFragmentOffset, verifyFragmentLength,
                     binIntervalStart, binIntervalEnd);
 
             tempPeakValue = scanResult.getFirst();
@@ -68,12 +68,12 @@ public class FFTFrequencyDetector
             }
         }
 
-        return (float)sampleRate / minOptimalInterval;
+        return (double)sampleRate / minOptimalInterval;
     }
 
-    private Pair<Float, Integer> scanSignalIntervals(float[] x, int index, int length,
-                                                             int intervalMin, int intervalMax) {
-        float optimalValue = Float.MAX_VALUE;
+    private Pair<Double, Integer> scanSignalIntervals(double[] x, int index, int length,
+                                                      int intervalMin, int intervalMax) {
+        double optimalValue = Double.MAX_VALUE;
         int optimalInterval = 0;
 
         // distance between min and max range value can be big
@@ -90,9 +90,9 @@ public class FFTFrequencyDetector
         for (int i = 0; i < steps; i++) {
             int interval = intervalMin + (intervalMax - intervalMin) * i / steps;
 
-            float sum = 0;
+            double sum = 0;
             for (int j = 0; j < length; j++) {
-                float diff = x[index + j] - x[index + j + interval];
+                double diff = x[index + j] - x[index + j + interval];
                 sum += diff * diff;
             }
             if (optimalValue > sum) {
@@ -104,8 +104,8 @@ public class FFTFrequencyDetector
         return new Pair<>(optimalValue, optimalInterval);
     }
 
-    private int[] findPeaks(float[] values, int index, int length, int peaksCount) {
-        float[] peakValues = new float[peaksCount];
+    private int[] findPeaks(double[] values, int index, int length, int peaksCount) {
+        double[] peakValues = new double[peaksCount];
         int[] peakIndices = new int[peaksCount];
 
         for (int i = 0; i < peaksCount; i++) {
@@ -113,7 +113,7 @@ public class FFTFrequencyDetector
         }
 
         // find min peaked value
-        float minStoredPeak = peakValues[0];
+        double minStoredPeak = peakValues[0];
         int minIndex = 0;
         for (int i = 1; i < peaksCount; i++) {
             if (minStoredPeak > peakValues[i]) minStoredPeak = peakValues[minIndex = i];
