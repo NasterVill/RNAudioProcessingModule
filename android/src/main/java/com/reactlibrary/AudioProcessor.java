@@ -9,8 +9,8 @@ import com.reactlibrary.fequency_tools.FFTFrequencyDetector;
 import com.reactlibrary.fequency_tools.windows.HammingWindow;
 
 public class AudioProcessor implements Runnable {
-    private static final int SAMPLE_RATE = 22050;
-    private static final int DEFAULT_BUFF_SIZE = 16384;
+    private static final int SAMPLE_RATE = 44100;
+    private static final int DEFAULT_BUFF_SIZE = 65536;
     private static final float ALLOWED_FREQUENCY_DIFFERENCE = 1;
 
     public interface FrequencyDetectionListener {
@@ -74,10 +74,6 @@ public class AudioProcessor implements Runnable {
         float[] resultArray = new float[length];
 
         for(int i = 0; i < length; i++) {
-            // The nominal range of ENCODING_PCM_FLOAT audio data is [-1.0, 1.0], but here we use
-            // ENCODING_PCM_16BIT, because ENCODING_PCM_FLOAT is supported only in API LOLLIPOP+ and higher
-            // so to work with float values, extended to double, we need to divide it
-            // by max 16-bit integer value
             resultArray[i] = source[i] / 32768.0F;
         }
         return resultArray;

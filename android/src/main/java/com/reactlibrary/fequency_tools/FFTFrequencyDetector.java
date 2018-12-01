@@ -78,7 +78,7 @@ public class FFTFrequencyDetector
 
         // distance between min and max range value can be big
         // limiting it to the fixed value
-        final int maxAmount = 30;
+        final int maxAmount = 100;
         int steps = intervalMax - intervalMin;
         if (steps > maxAmount)
             steps = maxAmount;
