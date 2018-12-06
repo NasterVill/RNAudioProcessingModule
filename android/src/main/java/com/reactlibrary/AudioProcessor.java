@@ -9,8 +9,8 @@ import com.reactlibrary.fequency_tools.FFTFrequencyDetector;
 import com.reactlibrary.fequency_tools.windows.HammingWindow;
 
 public class AudioProcessor implements Runnable {
-    private static final int SAMPLE_RATE = 44100;
-    private static final int DEFAULT_BUFF_SIZE = 65536;
+    private static final int SAMPLE_RATE = 22050;
+    private static final int DEFAULT_BUFF_SIZE = 16384;
     private static final float ALLOWED_FREQUENCY_DIFFERENCE = 1;
 
     public interface FrequencyDetectionListener {
